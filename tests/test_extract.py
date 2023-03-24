@@ -30,6 +30,23 @@ def test_info_url_age_restricted(cipher_signature):
     assert 'video_id=2lAe1cqCOXo' in video_info_url
 
 
+def test_channel_name():
+    tests = (
+        ('https://www.youtube.com/c/ProgrammingKnowledge', '/c/ProgrammingKnowledge'),
+        ('https://www.youtube.com/channel/UCs6nmQViDpUw0nuIx9c_WvA', '/channel/UCs6nmQViDpUw0nuIx9c_WvA'),
+        ('https://www.youtube.com/u/ProgrammingKnowledge', '/u/ProgrammingKnowledge'),
+        ('https://www.youtube.com/user/ProgrammingKnowledge/community', '/user/ProgrammingKnowledge'),
+        ('https://www.youtube.com/@ProgrammingKnowledge', '/@ProgrammingKnowledge'),
+    )
+
+    for url, name in tests:
+        assert extract.channel_name(url) == name
+
+    # Test a non-matching URL.
+    with pytest.raises(RegexMatchError):
+        extract.channel_name('https://www.youtube.com/results?search_query=not+a+channel')
+
+
 def test_js_url(cipher_signature):
     expected = (
         r"https://youtube.com/s/player/([\w\d]+)/player_ias.vflset/en_US/base.js"
